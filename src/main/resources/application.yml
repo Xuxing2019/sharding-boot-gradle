@@ -1,0 +1,37 @@
+#数据分片配置
+
+spring:
+  main:
+    # 允许重新定义bean
+    allow-bean-definition-overriding: true
+  shardingsphere:
+    props:
+      #sql显示
+      sql.show: true
+    # 数据源
+    datasource:
+      names: ds0,ds1
+      ds0:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://aliyun:3306/sharding0
+        username: root
+        password: Xuxing_2019
+      ds1:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://aliyun:3306/sharding1
+        username: root
+        password: Xuxing_2019
+    sharding:
+      default-database-strategy:
+        inline:
+          sharding-column: id
+          algorithm-expression: ds$->{id % 2}
+      tables:
+        studio_task_order:
+          actual-data-nodes: ds$->{0..1}.studio_task_order$->{0..1}
+          table-strategy:
+            inline:
+              sharding-column: id
+              algorithm-expression: studio_task_order$->{id % 2}
